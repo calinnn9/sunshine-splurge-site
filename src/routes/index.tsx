@@ -620,7 +620,7 @@ html, body { overflow-x: hidden; }
 
 /* CATEGORIES */
 .sr-root .cats-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
   background: var(--border); border: 1px solid var(--border);
 }
 .sr-root .cat-card {
