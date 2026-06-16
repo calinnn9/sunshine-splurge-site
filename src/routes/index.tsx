@@ -421,6 +421,63 @@ html, body { overflow-x: hidden; }
 }
 .sr-root .cursor.big { width: 44px; height: 44px; background: rgba(214,51,255,0.3); }
 
+.sr-root .fly-canvas {
+  position: fixed; inset: 0; width: 100vw; height: 100vh;
+  pointer-events: none; z-index: 50; mix-blend-mode: screen;
+}
+.sr-root .magnetic { transition: transform .25s cubic-bezier(.2,.8,.2,1); display: inline-block; will-change: transform; }
+.sr-root .hero-ball { transition: transform .15s ease-out, filter .2s ease-out; will-change: transform, filter; }
+.sr-root .hero-title { transition: transform .25s ease-out; will-change: transform; }
+
+.sr-root .cat-card { transform-style: preserve-3d; transition: background .4s, transform .4s cubic-bezier(.2,.8,.2,1); }
+.sr-root .cat-card:hover { transform: translateY(-8px) rotate(-1deg); box-shadow: 0 30px 60px -20px rgba(214,51,255,0.4); }
+.sr-root .cat-card::before {
+  content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: linear-gradient(135deg, var(--magenta), var(--orange), var(--pink));
+  opacity: 0; transition: opacity .4s; z-index: -1; filter: blur(12px);
+}
+.sr-root .cat-card:hover::before { opacity: .6; }
+.sr-root .cat-num { display: inline-block; transition: color .3s, transform .3s; }
+.sr-root .cat-card:hover .cat-num { transform: translateX(6px) scale(1.08); }
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.sr-root .hero-brandline { animation: float 4s ease-in-out infinite, fadeUp .8s .2s forwards; }
+
+@keyframes shine {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.sr-root .accent-magenta {
+  background: linear-gradient(90deg, var(--magenta) 0%, var(--pink) 40%, var(--orange) 50%, var(--pink) 60%, var(--magenta) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 4s linear infinite;
+}
+.sr-root .accent-orange {
+  background: linear-gradient(90deg, var(--orange) 0%, var(--yellow) 50%, var(--orange) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+  text-shadow: 0 0 18px rgba(255,177,59,0.55);
+}
+.sr-root .btn-tickets, .sr-root .register-btn { position: relative; overflow: hidden; }
+.sr-root .btn-tickets::after, .sr-root .register-btn::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left .6s;
+}
+.sr-root .btn-tickets:hover::after, .sr-root .register-btn:hover::after { left: 100%; }
+
+.sr-root .stat { transition: background .3s, transform .3s; }
+.sr-root .stat:hover { background: #160930; transform: translateY(-4px); }
+.sr-root .stat:hover .stat-num { color: var(--magenta); text-shadow: 0 0 20px rgba(214,51,255,0.7); }
+.sr-root .stat-num { transition: color .3s, text-shadow .3s; }
+
 .sr-root nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
