@@ -35,7 +35,7 @@ function Landing() {
       cursor.style.top = e.clientY + "px";
     };
     document.addEventListener("mousemove", onMove);
-    const hoverables = document.querySelectorAll("a, button, .cat-card, .event, .crew-card");
+    const hoverables = document.querySelectorAll("a, button, .cat-card");
     const enter = () => cursor?.classList.add("big");
     const leave = () => cursor?.classList.remove("big");
     hoverables.forEach((el) => {
@@ -90,7 +90,7 @@ function Landing() {
     window.addEventListener("resize", onResize);
 
     // Reveal
-    const reveals = document.querySelectorAll(".reveal, .day-block");
+    const reveals = document.querySelectorAll(".reveal");
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry, i) => {
@@ -130,8 +130,6 @@ function Landing() {
           <ul className="nav-links">
             <li><a href="#about">Despre</a></li>
             <li><a href="#categories">Categorii</a></li>
-            <li><a href="#schedule">Program</a></li>
-            <li><a href="#crew">Crew</a></li>
           </ul>
           <a href="#register" className="nav-cta">Get tickets</a>
         </nav>
@@ -164,7 +162,6 @@ function Landing() {
 
             <div className="hero-actions">
               <a href="#register" className="btn-tickets">Get your tickets now</a>
-              <a href="#schedule" className="btn-ghost">Vezi programul</a>
             </div>
           </div>
 
@@ -235,48 +232,6 @@ function Landing() {
           </div>
         </section>
 
-        {/* SCHEDULE */}
-        <section id="schedule">
-          <div className="section-label">Program</div>
-          <div className="schedule-wrap">
-            {schedule.map((d) => (
-              <div className="day-block" key={d.day}>
-                <div className="day-header">
-                  <div className="day-name">{d.day}</div>
-                  <div className="day-date">{d.date}</div>
-                </div>
-                <div className="events">
-                  {d.events.map((e, i) => (
-                    <div className="event" key={i}>
-                      <div className="event-time">{e.time}</div>
-                      <div className="event-name">{e.name}</div>
-                      <div className={`event-tag${e.highlight ? " highlight" : ""}`}>{e.tag}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* CREW */}
-        <section id="crew">
-          <div className="section-label">Mission Crew</div>
-          <div className="crew-grid reveal">
-            {[
-              { name: "Adam Fletcher", role: "Commander" },
-              { name: "Callum Price", role: "Pilot" },
-              { name: "Emma Brooks", role: "Mission Specialist" },
-            ].map((p) => (
-              <div className="crew-card" key={p.name}>
-                <div className="crew-badge" aria-hidden="true" />
-                <div className="crew-name">{p.name}</div>
-                <div className="crew-role">{p.role}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* REGISTER */}
         <section id="register" className="register-section">
           <div className="register-bg"></div>
@@ -301,40 +256,6 @@ function Landing() {
   );
 }
 
-const schedule = [
-  {
-    day: "Day 01",
-    date: "Luni · 20 iulie 2026",
-    events: [
-      { time: "09:00", name: "Check-in & înregistrare echipe", tag: "Toate categoriile" },
-      { time: "11:00", name: "Ceremonia de deschidere", tag: "Main stage", highlight: true },
-      { time: "12:00", name: "Grupe — U15", tag: "U15" },
-      { time: "15:00", name: "Grupe — U18 F", tag: "U18 F" },
-      { time: "18:00", name: "Grupe — U18 M", tag: "U18 M" },
-    ],
-  },
-  {
-    day: "Day 02",
-    date: "Marți · 21 iulie 2026",
-    events: [
-      { time: "10:00", name: "Grupe — Open", tag: "Open" },
-      { time: "13:00", name: "Sferturi — U15 & U18 F", tag: "Knockout" },
-      { time: "16:00", name: "Sferturi — U18 M & Open", tag: "Knockout" },
-      { time: "20:00", name: "Nibiru Night Session", tag: "Festival", highlight: true },
-    ],
-  },
-  {
-    day: "Day 03",
-    date: "Miercuri · 22 iulie 2026",
-    events: [
-      { time: "11:00", name: "Semifinale — toate categoriile", tag: "Knockout" },
-      { time: "14:00", name: "Locul 3 — U15 & U18 F", tag: "Bronze" },
-      { time: "16:00", name: "Locul 3 — U18 M & Open", tag: "Bronze" },
-      { time: "18:00", name: "Finale — toate categoriile", tag: "Main stage", highlight: true },
-      { time: "20:00", name: "Premiere & închidere", tag: "Main stage", highlight: true },
-    ],
-  },
-];
 
 const css = `
 .sr-root {
@@ -597,78 +518,6 @@ html, body { overflow-x: hidden; }
   color: rgba(214,51,255,0.8); text-transform: uppercase; position: relative;
 }
 
-/* SCHEDULE */
-.sr-root .schedule-wrap { max-width: 880px; }
-.sr-root .day-block {
-  border-top: 1px solid var(--border); padding: 40px 0;
-  opacity: 0; transform: translateY(24px); transition: opacity .6s, transform .6s;
-}
-.sr-root .day-block.visible { opacity: 1; transform: translateY(0); }
-.sr-root .day-header { display: flex; align-items: baseline; gap: 20px; margin-bottom: 28px; }
-.sr-root .day-name {
-  font-family: 'Bebas Neue', sans-serif; font-size: 44px; color: var(--white); line-height: 1;
-}
-.sr-root .day-date {
-  font-family: 'Orbitron', sans-serif; font-size: 11px;
-  letter-spacing: 0.22em; color: var(--muted); text-transform: uppercase;
-}
-.sr-root .events { display: flex; flex-direction: column; }
-.sr-root .event {
-  display: grid; grid-template-columns: 90px 1fr 140px;
-  align-items: center; padding: 16px 0;
-  border-bottom: 1px solid var(--border); transition: padding-left .2s;
-}
-.sr-root .event:hover { padding-left: 12px; }
-.sr-root .event:hover .event-name { color: var(--white); }
-.sr-root .event:last-child { border-bottom: none; }
-.sr-root .event-time {
-  font-family: 'Bebas Neue', sans-serif; font-size: 22px;
-  color: var(--magenta); letter-spacing: 0.06em;
-}
-.sr-root .event-name {
-  font-size: 14px; color: rgba(255,255,255,0.78);
-  letter-spacing: 0.04em; transition: color .2s;
-}
-.sr-root .event-tag {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 9px; letter-spacing: 0.2em; color: var(--muted);
-  text-transform: uppercase; text-align: right;
-  border: 1px solid var(--border); padding: 5px 10px;
-  border-radius: 2px; justify-self: end;
-}
-.sr-root .event-tag.highlight {
-  color: var(--magenta); border-color: rgba(214,51,255,0.5);
-  box-shadow: 0 0 12px rgba(214,51,255,0.2);
-}
-
-/* CREW */
-.sr-root .crew-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 1px; background: var(--border); border: 1px solid var(--border);
-}
-.sr-root .crew-card {
-  background: #0b0418; padding: 48px 32px; text-align: center;
-  position: relative; overflow: hidden; transition: background .3s;
-}
-.sr-root .crew-card:hover { background: #160930; }
-.sr-root .crew-badge {
-  width: 64px; height: 64px; margin: 0 auto 24px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 35%, var(--magenta) 0%, var(--magenta-deep) 40%, #2a0640 80%),
-    var(--black);
-  box-shadow: 0 0 28px rgba(214,51,255,0.55), inset 0 0 0 1px rgba(255,255,255,0.2);
-}
-.sr-root .crew-name {
-  font-family: 'Orbitron', sans-serif; font-weight: 700;
-  font-size: 16px; letter-spacing: 0.18em;
-  color: var(--white); text-transform: uppercase;
-}
-.sr-root .crew-role {
-  margin-top: 8px;
-  font-size: 11px; letter-spacing: 0.28em;
-  color: var(--magenta); text-transform: uppercase;
-}
 
 /* REGISTER */
 .sr-root .register-section {
@@ -741,9 +590,6 @@ html, body { overflow-x: hidden; }
   .sr-root .hero { padding: 120px 20px 60px; }
   .sr-root .about-grid { grid-template-columns: 1fr; gap: 40px; }
   .sr-root .cats-grid { grid-template-columns: repeat(2, 1fr); }
-  .sr-root .crew-grid { grid-template-columns: 1fr; }
-  .sr-root .event { grid-template-columns: 60px 1fr; }
-  .sr-root .event-tag { display: none; }
   .sr-root .scroll-hint { display: none; }
 }
 `;
