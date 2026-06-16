@@ -313,7 +313,7 @@ function Landing() {
               </h2>
               <div className="about-stats">
                 <div className="stat">
-                  <div className="stat-num">4<span>+</span></div>
+                  <div className="stat-num">3</div>
                   <div className="stat-label">Categorii</div>
                 </div>
                 <div className="stat">
