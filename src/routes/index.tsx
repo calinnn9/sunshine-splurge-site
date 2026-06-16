@@ -89,6 +89,127 @@ function Landing() {
     };
     window.addEventListener("resize", onResize);
 
+    // Flying basketballs
+    const fly = document.getElementById("flyCanvas") as HTMLCanvasElement | null;
+    const fctx = fly?.getContext("2d") ?? null;
+    let balls: { x: number; y: number; vx: number; vy: number; r: number; rot: number; vr: number; hue: number }[] = [];
+    const fresize = () => {
+      if (!fly) return;
+      fly.width = window.innerWidth;
+      fly.height = window.innerHeight;
+    };
+    const spawnBall = (x?: number, y?: number) => {
+      if (!fly) return;
+      balls.push({
+        x: x ?? Math.random() * fly.width,
+        y: y ?? -40,
+        vx: (Math.random() - 0.5) * 6,
+        vy: Math.random() * 2 + 1,
+        r: Math.random() * 22 + 14,
+        rot: Math.random() * Math.PI * 2,
+        vr: (Math.random() - 0.5) * 0.2,
+        hue: Math.random() > 0.5 ? 300 : 30,
+      });
+      if (balls.length > 40) balls.shift();
+    };
+    const fdraw = () => {
+      if (!fctx || !fly) return;
+      fctx.clearRect(0, 0, fly.width, fly.height);
+      balls.forEach((b) => {
+        b.vy += 0.08;
+        b.x += b.vx;
+        b.y += b.vy;
+        b.rot += b.vr;
+        if (b.x < -50 || b.x > fly.width + 50 || b.y > fly.height + 80) {
+          b.x = Math.random() * fly.width;
+          b.y = -40;
+          b.vy = Math.random() * 2 + 1;
+          b.vx = (Math.random() - 0.5) * 4;
+        }
+        fctx.save();
+        fctx.translate(b.x, b.y);
+        fctx.rotate(b.rot);
+        const grd = fctx.createRadialGradient(-b.r * 0.3, -b.r * 0.3, 2, 0, 0, b.r);
+        grd.addColorStop(0, `hsla(${b.hue},100%,75%,0.95)`);
+        grd.addColorStop(0.6, `hsla(${b.hue},100%,45%,0.85)`);
+        grd.addColorStop(1, `hsla(${b.hue},100%,15%,0.7)`);
+        fctx.fillStyle = grd;
+        fctx.shadowColor = `hsla(${b.hue},100%,60%,0.9)`;
+        fctx.shadowBlur = 24;
+        fctx.beginPath();
+        fctx.arc(0, 0, b.r, 0, Math.PI * 2);
+        fctx.fill();
+        fctx.strokeStyle = "rgba(0,0,0,0.55)";
+        fctx.lineWidth = 1.2;
+        fctx.shadowBlur = 0;
+        fctx.beginPath(); fctx.moveTo(-b.r, 0); fctx.lineTo(b.r, 0); fctx.stroke();
+        fctx.beginPath(); fctx.moveTo(0, -b.r); fctx.lineTo(0, b.r); fctx.stroke();
+        fctx.beginPath(); fctx.arc(0, 0, b.r, -Math.PI / 3, Math.PI / 3); fctx.stroke();
+        fctx.beginPath(); fctx.arc(0, 0, b.r, Math.PI - Math.PI / 3, Math.PI + Math.PI / 3); fctx.stroke();
+        fctx.restore();
+      });
+      fraf = requestAnimationFrame(fdraw);
+    };
+    let fraf = 0;
+    fresize();
+    for (let i = 0; i < 12; i++) spawnBall(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
+    fraf = requestAnimationFrame(fdraw);
+    const onClickSpawn = (e: MouseEvent) => {
+      for (let i = 0; i < 6; i++) {
+        balls.push({
+          x: e.clientX, y: e.clientY,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.8) * 12,
+          r: Math.random() * 18 + 10,
+          rot: Math.random() * Math.PI * 2,
+          vr: (Math.random() - 0.5) * 0.4,
+          hue: Math.random() > 0.5 ? 300 : 30,
+        });
+      }
+      if (balls.length > 60) balls.splice(0, balls.length - 60);
+    };
+    document.addEventListener("click", onClickSpawn);
+    const onFResize = () => fresize();
+    window.addEventListener("resize", onFResize);
+
+    // Parallax on hero ball + title
+    const heroBall = document.querySelector(".hero-ball") as HTMLElement | null;
+    const heroTitle = document.querySelector(".hero-title") as HTMLElement | null;
+    const onParallax = (e: MouseEvent) => {
+      const cx = (e.clientX / window.innerWidth - 0.5) * 2;
+      const cy = (e.clientY / window.innerHeight - 0.5) * 2;
+      if (heroBall) heroBall.style.transform = `translateX(-50%) translate(${cx * 20}px, ${cy * 16}px) rotate(${cx * 4}deg)`;
+      if (heroTitle) heroTitle.style.transform = `translate(${cx * -8}px, ${cy * -6}px)`;
+    };
+    window.addEventListener("mousemove", onParallax);
+
+    // Scroll parallax
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (heroBall) heroBall.style.setProperty("--scrollY", `${y * 0.3}px`);
+      const ball = document.querySelector(".hero-ball") as HTMLElement | null;
+      if (ball) ball.style.filter = `saturate(1.1) brightness(${1.05 - y / 2000}) hue-rotate(${y / 8}deg)`;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    // Magnetic buttons
+    const magnets = document.querySelectorAll(".magnetic");
+    const magMove = (e: Event) => {
+      const ev = e as MouseEvent;
+      const el = ev.currentTarget as HTMLElement;
+      const r = el.getBoundingClientRect();
+      const x = ev.clientX - r.left - r.width / 2;
+      const y = ev.clientY - r.top - r.height / 2;
+      el.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+    };
+    const magLeave = (e: Event) => {
+      (e.currentTarget as HTMLElement).style.transform = "";
+    };
+    magnets.forEach((el) => {
+      el.addEventListener("mousemove", magMove);
+      el.addEventListener("mouseleave", magLeave);
+    });
+
     // Reveal
     const reveals = document.querySelectorAll(".reveal");
     const observer = new IntersectionObserver(
@@ -110,7 +231,16 @@ function Landing() {
         el.removeEventListener("mouseleave", leave);
       });
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", onFResize);
+      window.removeEventListener("mousemove", onParallax);
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("click", onClickSpawn);
+      magnets.forEach((el) => {
+        el.removeEventListener("mousemove", magMove);
+        el.removeEventListener("mouseleave", magLeave);
+      });
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(fraf);
       observer.disconnect();
     };
   }, []);
@@ -120,6 +250,8 @@ function Landing() {
       <style>{css}</style>
       <div className="sr-root">
         <div className="cursor" id="cursor"></div>
+        <canvas className="fly-canvas" id="flyCanvas"></canvas>
+
 
         <nav>
           <a href="#home" className="nav-logo">
@@ -161,7 +293,7 @@ function Landing() {
             <div className="hero-date">20 – 22 IULIE 2026 · COSTINEȘTI</div>
 
             <div className="hero-actions">
-              <a href="#register" className="btn-tickets">Get your tickets now</a>
+              <a href="#register" className="btn-tickets magnetic">Get your tickets now</a>
             </div>
           </div>
 
@@ -181,7 +313,7 @@ function Landing() {
               </h2>
               <div className="about-stats">
                 <div className="stat">
-                  <div className="stat-num">4<span>+</span></div>
+                  <div className="stat-num">3</div>
                   <div className="stat-label">Categorii</div>
                 </div>
                 <div className="stat">
@@ -217,7 +349,6 @@ function Landing() {
           <div className="section-label">Categorii</div>
           <div className="cats-grid reveal">
             {[
-              { num: "U15", desc: "Under 15", fmt: "3×3 · Mixed" },
               { num: "U18 M", desc: "Under 18 · Băieți", fmt: "3×3 · Men" },
               { num: "U18 F", desc: "Under 18 · Fete", fmt: "3×3 · Women" },
               { num: "OPEN", desc: "Toate vârstele", fmt: "3×3 · Open" },
@@ -242,7 +373,7 @@ function Landing() {
               <span className="accent-magenta">NOW</span>
             </h2>
             <p className="register-sub">Locuri limitate · un singur teren, toate categoriile</p>
-            <a href="#" className="register-btn">Rezervă-ți biletul</a>
+            <a href="#" className="register-btn magnetic">Rezervă-ți biletul</a>
             <p className="deadline">Deadline înscriere · 10 iulie 2026</p>
           </div>
         </section>
@@ -289,6 +420,63 @@ html, body { overflow-x: hidden; }
   mix-blend-mode: screen;
 }
 .sr-root .cursor.big { width: 44px; height: 44px; background: rgba(214,51,255,0.3); }
+
+.sr-root .fly-canvas {
+  position: fixed; inset: 0; width: 100vw; height: 100vh;
+  pointer-events: none; z-index: 50; mix-blend-mode: screen;
+}
+.sr-root .magnetic { transition: transform .25s cubic-bezier(.2,.8,.2,1); display: inline-block; will-change: transform; }
+.sr-root .hero-ball { transition: transform .15s ease-out, filter .2s ease-out; will-change: transform, filter; }
+.sr-root .hero-title { transition: transform .25s ease-out; will-change: transform; }
+
+.sr-root .cat-card { transform-style: preserve-3d; transition: background .4s, transform .4s cubic-bezier(.2,.8,.2,1); }
+.sr-root .cat-card:hover { transform: translateY(-8px) rotate(-1deg); box-shadow: 0 30px 60px -20px rgba(214,51,255,0.4); }
+.sr-root .cat-card::before {
+  content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: linear-gradient(135deg, var(--magenta), var(--orange), var(--pink));
+  opacity: 0; transition: opacity .4s; z-index: -1; filter: blur(12px);
+}
+.sr-root .cat-card:hover::before { opacity: .6; }
+.sr-root .cat-num { display: inline-block; transition: color .3s, transform .3s; }
+.sr-root .cat-card:hover .cat-num { transform: translateX(6px) scale(1.08); }
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.sr-root .hero-brandline { animation: float 4s ease-in-out infinite, fadeUp .8s .2s forwards; }
+
+@keyframes shine {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.sr-root .accent-magenta {
+  background: linear-gradient(90deg, var(--magenta) 0%, var(--pink) 40%, var(--orange) 50%, var(--pink) 60%, var(--magenta) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 4s linear infinite;
+}
+.sr-root .accent-orange {
+  background: linear-gradient(90deg, var(--orange) 0%, var(--yellow) 50%, var(--orange) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+  text-shadow: 0 0 18px rgba(255,177,59,0.55);
+}
+.sr-root .btn-tickets, .sr-root .register-btn { position: relative; overflow: hidden; }
+.sr-root .btn-tickets::after, .sr-root .register-btn::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left .6s;
+}
+.sr-root .btn-tickets:hover::after, .sr-root .register-btn:hover::after { left: 100%; }
+
+.sr-root .stat { transition: background .3s, transform .3s; }
+.sr-root .stat:hover { background: #160930; transform: translateY(-4px); }
+.sr-root .stat:hover .stat-num { color: var(--magenta); text-shadow: 0 0 20px rgba(214,51,255,0.7); }
+.sr-root .stat-num { transition: color .3s, text-shadow .3s; }
 
 .sr-root nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
@@ -384,14 +572,6 @@ html, body { overflow-x: hidden; }
 }
 .sr-root .hero-title .outline {
   -webkit-text-stroke: 1.5px rgba(255,255,255,0.7); color: transparent;
-}
-.sr-root .accent-orange {
-  color: var(--orange);
-  text-shadow: 0 0 18px rgba(255,177,59,0.55);
-}
-.sr-root .accent-magenta {
-  color: var(--magenta);
-  text-shadow: 0 0 24px rgba(214,51,255,0.7);
 }
 
 .sr-root .hero-date {
@@ -489,7 +669,7 @@ html, body { overflow-x: hidden; }
 
 /* CATEGORIES */
 .sr-root .cats-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
   background: var(--border); border: 1px solid var(--border);
 }
 .sr-root .cat-card {
@@ -589,7 +769,7 @@ html, body { overflow-x: hidden; }
   .sr-root section { padding: 80px 24px; }
   .sr-root .hero { padding: 120px 20px 60px; }
   .sr-root .about-grid { grid-template-columns: 1fr; gap: 40px; }
-  .sr-root .cats-grid { grid-template-columns: repeat(2, 1fr); }
+  .sr-root .cats-grid { grid-template-columns: 1fr; }
   .sr-root .scroll-hint { display: none; }
 }
 `;
