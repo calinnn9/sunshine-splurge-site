@@ -231,7 +231,16 @@ function Landing() {
         el.removeEventListener("mouseleave", leave);
       });
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", onFResize);
+      window.removeEventListener("mousemove", onParallax);
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("click", onClickSpawn);
+      magnets.forEach((el) => {
+        el.removeEventListener("mousemove", magMove);
+        el.removeEventListener("mouseleave", magLeave);
+      });
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(fraf);
       observer.disconnect();
     };
   }, []);
@@ -241,6 +250,8 @@ function Landing() {
       <style>{css}</style>
       <div className="sr-root">
         <div className="cursor" id="cursor"></div>
+        <canvas className="fly-canvas" id="flyCanvas"></canvas>
+
 
         <nav>
           <a href="#home" className="nav-logo">
