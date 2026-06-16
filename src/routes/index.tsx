@@ -349,7 +349,6 @@ function Landing() {
           <div className="section-label">Categorii</div>
           <div className="cats-grid reveal">
             {[
-              { num: "U15", desc: "Under 15", fmt: "3×3 · Mixed" },
               { num: "U18 M", desc: "Under 18 · Băieți", fmt: "3×3 · Men" },
               { num: "U18 F", desc: "Under 18 · Fete", fmt: "3×3 · Women" },
               { num: "OPEN", desc: "Toate vârstele", fmt: "3×3 · Open" },
