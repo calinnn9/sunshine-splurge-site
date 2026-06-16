@@ -89,6 +89,127 @@ function Landing() {
     };
     window.addEventListener("resize", onResize);
 
+    // Flying basketballs
+    const fly = document.getElementById("flyCanvas") as HTMLCanvasElement | null;
+    const fctx = fly?.getContext("2d") ?? null;
+    let balls: { x: number; y: number; vx: number; vy: number; r: number; rot: number; vr: number; hue: number }[] = [];
+    const fresize = () => {
+      if (!fly) return;
+      fly.width = window.innerWidth;
+      fly.height = window.innerHeight;
+    };
+    const spawnBall = (x?: number, y?: number) => {
+      if (!fly) return;
+      balls.push({
+        x: x ?? Math.random() * fly.width,
+        y: y ?? -40,
+        vx: (Math.random() - 0.5) * 6,
+        vy: Math.random() * 2 + 1,
+        r: Math.random() * 22 + 14,
+        rot: Math.random() * Math.PI * 2,
+        vr: (Math.random() - 0.5) * 0.2,
+        hue: Math.random() > 0.5 ? 300 : 30,
+      });
+      if (balls.length > 40) balls.shift();
+    };
+    const fdraw = () => {
+      if (!fctx || !fly) return;
+      fctx.clearRect(0, 0, fly.width, fly.height);
+      balls.forEach((b) => {
+        b.vy += 0.08;
+        b.x += b.vx;
+        b.y += b.vy;
+        b.rot += b.vr;
+        if (b.x < -50 || b.x > fly.width + 50 || b.y > fly.height + 80) {
+          b.x = Math.random() * fly.width;
+          b.y = -40;
+          b.vy = Math.random() * 2 + 1;
+          b.vx = (Math.random() - 0.5) * 4;
+        }
+        fctx.save();
+        fctx.translate(b.x, b.y);
+        fctx.rotate(b.rot);
+        const grd = fctx.createRadialGradient(-b.r * 0.3, -b.r * 0.3, 2, 0, 0, b.r);
+        grd.addColorStop(0, `hsla(${b.hue},100%,75%,0.95)`);
+        grd.addColorStop(0.6, `hsla(${b.hue},100%,45%,0.85)`);
+        grd.addColorStop(1, `hsla(${b.hue},100%,15%,0.7)`);
+        fctx.fillStyle = grd;
+        fctx.shadowColor = `hsla(${b.hue},100%,60%,0.9)`;
+        fctx.shadowBlur = 24;
+        fctx.beginPath();
+        fctx.arc(0, 0, b.r, 0, Math.PI * 2);
+        fctx.fill();
+        fctx.strokeStyle = "rgba(0,0,0,0.55)";
+        fctx.lineWidth = 1.2;
+        fctx.shadowBlur = 0;
+        fctx.beginPath(); fctx.moveTo(-b.r, 0); fctx.lineTo(b.r, 0); fctx.stroke();
+        fctx.beginPath(); fctx.moveTo(0, -b.r); fctx.lineTo(0, b.r); fctx.stroke();
+        fctx.beginPath(); fctx.arc(0, 0, b.r, -Math.PI / 3, Math.PI / 3); fctx.stroke();
+        fctx.beginPath(); fctx.arc(0, 0, b.r, Math.PI - Math.PI / 3, Math.PI + Math.PI / 3); fctx.stroke();
+        fctx.restore();
+      });
+      fraf = requestAnimationFrame(fdraw);
+    };
+    let fraf = 0;
+    fresize();
+    for (let i = 0; i < 12; i++) spawnBall(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
+    fraf = requestAnimationFrame(fdraw);
+    const onClickSpawn = (e: MouseEvent) => {
+      for (let i = 0; i < 6; i++) {
+        balls.push({
+          x: e.clientX, y: e.clientY,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.8) * 12,
+          r: Math.random() * 18 + 10,
+          rot: Math.random() * Math.PI * 2,
+          vr: (Math.random() - 0.5) * 0.4,
+          hue: Math.random() > 0.5 ? 300 : 30,
+        });
+      }
+      if (balls.length > 60) balls.splice(0, balls.length - 60);
+    };
+    document.addEventListener("click", onClickSpawn);
+    const onFResize = () => fresize();
+    window.addEventListener("resize", onFResize);
+
+    // Parallax on hero ball + title
+    const heroBall = document.querySelector(".hero-ball") as HTMLElement | null;
+    const heroTitle = document.querySelector(".hero-title") as HTMLElement | null;
+    const onParallax = (e: MouseEvent) => {
+      const cx = (e.clientX / window.innerWidth - 0.5) * 2;
+      const cy = (e.clientY / window.innerHeight - 0.5) * 2;
+      if (heroBall) heroBall.style.transform = `translateX(-50%) translate(${cx * 20}px, ${cy * 16}px) rotate(${cx * 4}deg)`;
+      if (heroTitle) heroTitle.style.transform = `translate(${cx * -8}px, ${cy * -6}px)`;
+    };
+    window.addEventListener("mousemove", onParallax);
+
+    // Scroll parallax
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (heroBall) heroBall.style.setProperty("--scrollY", `${y * 0.3}px`);
+      const ball = document.querySelector(".hero-ball") as HTMLElement | null;
+      if (ball) ball.style.filter = `saturate(1.1) brightness(${1.05 - y / 2000}) hue-rotate(${y / 8}deg)`;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    // Magnetic buttons
+    const magnets = document.querySelectorAll(".magnetic");
+    const magMove = (e: Event) => {
+      const ev = e as MouseEvent;
+      const el = ev.currentTarget as HTMLElement;
+      const r = el.getBoundingClientRect();
+      const x = ev.clientX - r.left - r.width / 2;
+      const y = ev.clientY - r.top - r.height / 2;
+      el.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+    };
+    const magLeave = (e: Event) => {
+      (e.currentTarget as HTMLElement).style.transform = "";
+    };
+    magnets.forEach((el) => {
+      el.addEventListener("mousemove", magMove);
+      el.addEventListener("mouseleave", magLeave);
+    });
+
     // Reveal
     const reveals = document.querySelectorAll(".reveal");
     const observer = new IntersectionObserver(
