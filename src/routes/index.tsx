@@ -35,7 +35,7 @@ function Landing() {
       cursor.style.top = e.clientY + "px";
     };
     document.addEventListener("mousemove", onMove);
-    const hoverables = document.querySelectorAll("a, button, .cat-card, .event, .crew-card");
+    const hoverables = document.querySelectorAll("a, button, .cat-card");
     const enter = () => cursor?.classList.add("big");
     const leave = () => cursor?.classList.remove("big");
     hoverables.forEach((el) => {
