@@ -720,7 +720,7 @@ html, body { overflow-x: hidden; }
   .sr-root section { padding: 80px 24px; }
   .sr-root .hero { padding: 120px 20px 60px; }
   .sr-root .about-grid { grid-template-columns: 1fr; gap: 40px; }
-  .sr-root .cats-grid { grid-template-columns: repeat(2, 1fr); }
+  .sr-root .cats-grid { grid-template-columns: 1fr; }
   .sr-root .scroll-hint { display: none; }
 }
 `;
