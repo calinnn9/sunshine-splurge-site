@@ -573,14 +573,6 @@ html, body { overflow-x: hidden; }
 .sr-root .hero-title .outline {
   -webkit-text-stroke: 1.5px rgba(255,255,255,0.7); color: transparent;
 }
-.sr-root .accent-orange {
-  color: var(--orange);
-  text-shadow: 0 0 18px rgba(255,177,59,0.55);
-}
-.sr-root .accent-magenta {
-  color: var(--magenta);
-  text-shadow: 0 0 24px rgba(214,51,255,0.7);
-}
 
 .sr-root .hero-date {
   margin-top: 32px;
