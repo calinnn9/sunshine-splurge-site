@@ -373,7 +373,7 @@ function Landing() {
               <span className="accent-magenta">NOW</span>
             </h2>
             <p className="register-sub">Locuri limitate · un singur teren, toate categoriile</p>
-            <a href="#" className="register-btn">Rezervă-ți biletul</a>
+            <a href="#" className="register-btn magnetic">Rezervă-ți biletul</a>
             <p className="deadline">Deadline înscriere · 10 iulie 2026</p>
           </div>
         </section>
