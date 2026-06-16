@@ -293,7 +293,7 @@ function Landing() {
             <div className="hero-date">20 – 22 IULIE 2026 · COSTINEȘTI</div>
 
             <div className="hero-actions">
-              <a href="#register" className="btn-tickets">Get your tickets now</a>
+              <a href="#register" className="btn-tickets magnetic">Get your tickets now</a>
             </div>
           </div>
 
