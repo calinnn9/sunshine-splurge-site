@@ -56,7 +56,7 @@ function Landing() {
     const init = () => {
       if (!canvas) return;
       stars = [];
-      for (let i = 0; i < 220; i++) {
+      for (let i = 0; i < 80; i++) {
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
@@ -110,7 +110,7 @@ function Landing() {
         vr: (Math.random() - 0.5) * 0.2,
         hue: Math.random() > 0.5 ? 300 : 30,
       });
-      if (balls.length > 40) balls.shift();
+      if (balls.length > 12) balls.shift();
     };
     const fdraw = () => {
       if (!fctx || !fly) return;
@@ -152,21 +152,21 @@ function Landing() {
     };
     let fraf = 0;
     fresize();
-    for (let i = 0; i < 12; i++) spawnBall(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
+    for (let i = 0; i < 4; i++) spawnBall(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
     fraf = requestAnimationFrame(fdraw);
     const onClickSpawn = (e: MouseEvent) => {
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 3; i++) {
         balls.push({
           x: e.clientX, y: e.clientY,
-          vx: (Math.random() - 0.5) * 14,
-          vy: (Math.random() - 0.8) * 12,
-          r: Math.random() * 18 + 10,
+          vx: (Math.random() - 0.5) * 10,
+          vy: (Math.random() - 0.8) * 8,
+          r: Math.random() * 14 + 8,
           rot: Math.random() * Math.PI * 2,
-          vr: (Math.random() - 0.5) * 0.4,
+          vr: (Math.random() - 0.5) * 0.3,
           hue: Math.random() > 0.5 ? 300 : 30,
         });
       }
-      if (balls.length > 60) balls.splice(0, balls.length - 60);
+      if (balls.length > 18) balls.splice(0, balls.length - 18);
     };
     document.addEventListener("click", onClickSpawn);
     const onFResize = () => fresize();
