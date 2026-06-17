@@ -7,7 +7,9 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
-  base: '/sunshine-splurge-site/',
+  vite: {
+    base: '/sunshine-splurge-site/',
+  },
   tanstackStart: {
     server: { entry: "server" },
   },
